@@ -1,0 +1,36 @@
+import delimited "/path/to/exposures_industry.csv", clear
+*insurind（1–19）與 AIIE_avg
+
+label define ind  ///
+    1  "Agriculture, forestry, fishery and husbandry"       ///
+    2  "Mining and rock extraction"                         ///
+    3  "Manufacturing"                                       ///
+    4  "Electricity and gas supply"                         ///
+    5  "Water supply and pollution control"                  ///
+    6  "Construction Engineering"                            ///
+    7  "Wholesale and retail trade"                          ///
+    8  "Transportation and warehousing"                      ///
+    9  "Accommodation and catering"                          ///
+    10 "Publishing, audio-visual and information and communications" ///
+    11 "Finance and Insurance"                               ///
+    12 "Real Estate"                                         ///
+    13 "Professional, scientific and technical services"     ///
+    14 "Support services"                                    ///
+    15 "Public administration and defense"                   ///
+    16 "Education"                                           ///
+    17 "Healthcare and social work services"                 ///
+    18 "Arts, entertainment and leisure services"            ///
+    19 "Other industry"
+label values insurind ind
+
+graph bar (mean) AIIE_avg,
+    over(insurind, label(angle(45)))   
+    ytitle("Average AIIE", size(medium))
+    ylabel(0(.2)1, nogrid)              
+    yscale(range(0 1))                  
+    bar(1, bcolor(blue))            
+    legend(off)                        
+    title("")                          
+    note("")                           
+
+graph export "Industry_AIIE_bar.png", width(1200) replace
