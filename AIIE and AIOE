@@ -1,0 +1,31 @@
+Calculating AIIE and AIOE
+
+import excel using "AIOE_DataAppendix.xlsx", sheet("Appendix B") firstrow clear
+rename NAICS naics6
+rename AIIE aiie
+keep naics6 aiie
+save "aiie_map.dta", replace
+
+import excel using "AIOE_DataAppendix.xlsx", sheet("Appendix A") firstrow clear
+rename SOC_Code soc6
+rename AIOE aioe
+keep soc6 aioe
+save "aioe_map.dta", replace
+
+use "survey_data.dta", clear
+
+#AIIE
+gen str2 insur2 = substr(string(INSURIND), 1, 2)
+merge m:1 insur2 using "aiie_map.dta"
+egen mean_aiie = mean(aiie), by(insur2)
+
+#AIOE
+gen str1 soc1 = substr(string(SOC6), 1, 1)
+merge m:1 soc1 using "aioe_map.dta"
+egen mean_aioe = mean(aioe), by(soc1)
+
+sort insur2
+list insur2 mean_aiie if _merge==3, noobs abbreviate(12)
+
+sort soc1
+list soc1 mean_aioe if _merge==3, noobs abbreviate(12)
