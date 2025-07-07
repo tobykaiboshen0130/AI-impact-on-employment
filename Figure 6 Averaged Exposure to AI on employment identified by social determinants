@@ -1,0 +1,7 @@
+merge m:1 A4_2 using exposures_occupation.dta   
+keep if _merge==3
+
+gen total_expo = (AIIE_avg + AIOE_avg) / 2
+
+collapse (mean) mean_total = total_expo, by(INSURIND SEX)
+list INSURIND SEX mean_total, noobs
