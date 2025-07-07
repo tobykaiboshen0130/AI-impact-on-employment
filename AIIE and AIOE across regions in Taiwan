@@ -1,0 +1,55 @@
+* import sas 使用： 
+* import sas7bdat using "/mnt/data/ilosh2022_combined.sas7bdat"
+
+rename A4.2 A4_2
+
+label define city_lbl ///
+    1 "New Taipei City"   2 "Taipei City"   3 "Taoyuan City"   4 "Taichung City"   ///
+    5 "Tainan City"   6 "Kaohsiung City"   7 "Yilan Country"   8 "Hsinchu Country"   ///
+    9 "Miaoli Country"  10 "Changhua Country"  11 "Nantou Country"  12 "Yunlin Country"   ///
+   13 "Chiayi Country"  14 "Pingtung Country"  15 "Taitung Country"  16 "Hualien Country"   ///
+   17 "Penghu Country"  18 "Keelung City"  19 "Hsinchu City"  20 "Chiayi City"
+label values A5 city_lbl
+
+generate double INSURIND_new = .
+replace INSURIND_new = 0.322 if INSURIND == 1
+replace INSURIND_new = 0.285 if INSURIND == 2
+replace INSURIND_new = 0.413 if INSURIND == 3
+replace INSURIND_new = 0.397 if INSURIND == 4
+replace INSURIND_new = 0.397 if INSURIND == 5
+replace INSURIND_new = 0.270 if INSURIND == 6
+replace INSURIND_new = 0.251 if INSURIND == 7
+replace INSURIND_new = 0.221 if INSURIND == 8
+replace INSURIND_new = 0.200 if INSURIND == 9
+replace INSURIND_new = 0.592 if INSURIND == 10
+replace INSURIND_new = 0.592 if INSURIND == 11
+replace INSURIND_new = 0.350 if INSURIND == 12
+replace INSURIND_new = 0.583 if INSURIND == 13
+replace INSURIND_new = 0.314 if INSURIND == 14
+replace INSURIND_new = 0.440 if INSURIND == 15
+replace INSURIND_new = 0.489 if INSURIND == 16
+replace INSURIND_new = 0.458 if INSURIND == 17
+replace INSURIND_new = 0.266 if INSURIND == 18
+replace INSURIND_new = 0.239 if INSURIND == 19
+
+generate double A4_2_new = .
+replace A4_2_new =  0.951 if A4_2 == 1
+replace A4_2_new =  0.583 if A4_2 == 2
+replace A4_2_new = -0.503 if A4_2 == 3
+replace A4_2_new = -0.454 if A4_2 == 4
+replace A4_2_new = -0.801 if A4_2 == 5
+replace A4_2_new = -1.102 if A4_2 == 6
+replace A4_2_new = -1.150 if A4_2 == 7
+replace A4_2_new = -1.271 if A4_2 == 8
+replace A4_2_new = -1.385 if A4_2 == 9
+
+*Calculating AIIE and AIOE across regions in Taiwan
+collapse (mean) INSURIND_new A4_2_new, by(A5)
+
+rename INSURIND_new mean_AIIE
+rename A4_2_new mean_AIOE
+label variable mean_AIIE 
+label variable mean_AIOE 
+label variable A5        
+
+list A5 mean_AIIE mean_AIOE, nolabel
