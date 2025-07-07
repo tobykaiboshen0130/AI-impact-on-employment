@@ -1,0 +1,37 @@
+*************************************************
+* Artificial Intelligence Exposure Risk Matrix *
+*************************************************
+
+* 1. Clear and input your data
+clear
+input str50 industry str30 job double risk
+"Agriculture, forestry, fishery and husbandry" "Managers_Supervisors" 0.12
+"Agriculture, forestry, fishery and husbandry" "Professionals"        0.45
+"Agriculture, forestry, fishery and husbandry" "Technicians"           0.40
+...
+"Electricity and gas supply"                     "Elementary_Occupations" 0.05
+end
+
+* (Replace “…” with all 20×9 rows of your normalized risk values.)
+
+* 2. Encode string variables as numeric for plotting
+encode industry, gen(ind_id) label(ind_lab)
+encode job,      gen(job_id) label(job_lab)
+
+* 3. Install heatplot if necessary
+capture which heatplot
+if _rc { 
+    ssc install heatplot, replace 
+}
+
+* 4. Draw the heatmap
+heatplot risk job_id ind_id, ///
+    color("green" "orange" "red") ///  green=low, orange=med, red=high
+    xlabel(, valuelabel angle(45) labsize(small)) ///
+    ylabel(, valuelabel labsize(small)) ///
+    title("Artificial Intelligence Exposure Risk Matrix") ///
+    legend(off) ///
+    aspect(1)
+
+* 5. Optional: save graph
+graph export "AI_Exposure_Risk_Matrix.png", replace width(2000)
