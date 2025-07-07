@@ -1,7 +1,43 @@
-merge m:1 A4_2 using exposures_occupation.dta   
-keep if _merge==3
+*--------------------------------------------------------------*
+*  Industry Exposure To AI by Sex, Education, Age Group, A6   *
+*  Stata v18.0                                                *
+*--------------------------------------------------------------*
 
-gen total_expo = (AIIE_avg + AIOE_avg) / 2
+use ilosh2022_combined.dta, clear
 
-collapse (mean) mean_total = total_expo, by(INSURIND SEX)
-list INSURIND SEX mean_total, noobs
+merge m:1 INSURIND using exposures_industry.dta
+drop if _merge!=3
+drop _merge
+
+merge m:1 A4_2 using exposures_occupation.dta
+drop if _merge!=3
+drop _merge
+
+generate double total_expo = (AIIE_avg + A4_2_new) / 2
+
+label define SEXlbl 1 "Male" 2 "Female"
+label values SEX SEXlbl
+
+label define edulbl 1 "Under junior high school" /// 
+                   2 "Senior high school" ///
+                   3 "Polytechnic institute" ///
+                   4 "College" ///
+                   5 "Post-graduate"
+label values EduLevel edulbl
+
+label define agelbl 1 "15-24" 2 "25-34" 3 "35-44" ///
+                   4 "45-54" 5 "55-64" 6 "65+"
+label values AGEGROUP agelbl
+
+label define worklbl 1 "Employers" ///
+                   2 "Self-employed Workers" ///
+                   3 "Employees" ///
+                   4 "Contributing Family Workers"
+label values A6 worklbl
+
+preserve
+collapse (mean) mean_expo = total_expo, ///
+         by(INSURIND SEX EduLevel AGEGROUP A6)
+list INSURIND SEX EduLevel AGEGROUP A6 mean_expo, noobs
+
+table INSURIND SEX EduLevel AGEGROUP A6, statistic(mean total_expo)
